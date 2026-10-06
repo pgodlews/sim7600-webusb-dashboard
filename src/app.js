@@ -89,3 +89,5 @@ async function setupNmea(){try{const prior=await command('AT+CGPSINFOCFG?'),m=pr
 function demoNmea(){const sentence=body=>{let x=0;for(const c of body)x^=c.charCodeAt(0);return '$'+body+'*'+x.toString(16).padStart(2,'0').toUpperCase();};for(const [talker,rows] of [['GP',['01,65,030,45','05,40,120,38','12,25,240,32','20,75,310,48']],['GL',['65,50,070,41','72,30,195,35']],['GA',['301,55,160,43','305,15,280,28']],['BD',['201,42,350,39','205,20,100,30']]])parseNmea(sentence(`${talker}GSV,1,1,${rows.length},${rows.join(',')}`));parseNmea(sentence('GPGGA,163000.0,5128.614000,N,00000.030000,W,1,14,1.0,45.0,M,48.0,M,,'));}
 
 controls();
+// ?demo=1 opens straight into simulated readings, e.g. for the hosted copy.
+if(globalThis.location&&new URLSearchParams(location.search).get('demo')==='1')demo();

@@ -1,15 +1,23 @@
 # SIM7600 WebUSB LTE & GNSS Dashboard
 
+[![CI](https://github.com/pgodlews/sim7600-webusb-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/pgodlews/sim7600-webusb-dashboard/actions/workflows/ci.yml)
+[![Pages](https://github.com/pgodlews/sim7600-webusb-dashboard/actions/workflows/pages.yml/badge.svg)](https://github.com/pgodlews/sim7600-webusb-dashboard/actions/workflows/pages.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+**[Open the dashboard](https://pgodlews.github.io/sim7600-webusb-dashboard/)** · **[Try the demo](https://pgodlews.github.io/sim7600-webusb-dashboard/?demo=1)** (no hardware needed)
+
 A standalone browser dashboard for the **M5Stack COMX.LTE / SIM7600G** modem. It connects directly over USB, with no serial driver, backend, package installation or external runtime dependencies.
+
+![Dashboard in demo mode with simulated LTE, GNSS and satellite data](docs/screenshots/dashboard.png)
 
 ## Quick start
 
-1. Download `index.html` and open it in **Google Chrome or Microsoft Edge**.
+1. Open **https://pgodlews.github.io/sim7600-webusb-dashboard/** in **Google Chrome or Microsoft Edge**, or download `index.html` and open it locally.
 2. Connect the powered modem with a USB data cable. Close other applications using its USB interface.
 3. Click **Connect USB** and choose **SimTech, Incorporated** in the browser's device picker.
 4. For satellite positioning, connect a suitable GNSS antenna, click **Enable GNSS** if needed, and give the antenna a clear view of the sky.
 
-Click **Try demo** to explore simulated LTE and satellite observations without connecting hardware. Demo data is explicitly labelled and is not your location.
+Click **Try demo**, or open [`?demo=1`](https://pgodlews.github.io/sim7600-webusb-dashboard/?demo=1), to explore simulated LTE and satellite observations without connecting hardware. Demo data is explicitly labelled and is not your location.
 
 If your browser does not allow USB access from a local file, serve the folder on localhost:
 
@@ -17,7 +25,7 @@ If your browser does not allow USB access from a local file, serve the folder on
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000` in Chrome or Edge. Hosted copies need HTTPS. Browser support for WebUSB varies; Safari does not support this connection method.
+Then open `http://localhost:8000` in Chrome or Edge. Hosted copies need HTTPS; the GitHub Pages copy above qualifies. Browser support for WebUSB varies; Safari does not support this connection method.
 
 ## Features
 
@@ -79,6 +87,8 @@ The editable sources are in `src/`. Do not edit the generated `index.html` direc
 | `src/index.template.html` | Page structure and metadata |
 | `assemble.cjs` | Creates the self-contained `index.html` |
 | `tests/transport.cjs` | Simulated USB and protocol checks |
+| `docs/screenshots/` | README screenshots, taken in demo mode |
+| `.github/workflows/` | CI tests, and GitHub Pages deployment of `index.html` |
 | `AGENTS.md` | Repository guidance for coding agents |
 
 Regenerate the distributable and run checks:
@@ -89,7 +99,7 @@ node --check src/app.js
 node tests/transport.cjs src/app.js
 ```
 
-No npm packages are required. Commit the regenerated `index.html` with source changes.
+No npm packages are required. Commit the regenerated `index.html` with source changes. CI runs the same checks on every push and pull request, and fails if the committed `index.html` is out of date. Each push to `main` redeploys it to GitHub Pages.
 
 ## Verification
 

@@ -11,7 +11,7 @@ This is a dependency-free WebUSB dashboard for M5Stack COMX.LTE / SIM7600G modem
 - `tests/transport.cjs`: simulated USB transport and protocol checks.
 - `docs/screenshots/`: README screenshots. Use explicitly labelled demo data for repository images.
 
-Edit source files and run `node assemble.cjs`; do not hand-edit the generated `index.html`. Commit the regenerated HTML alongside source changes.
+Edit source files and run `node assemble.cjs`; do not hand-edit the generated `index.html`. Commit the regenerated HTML alongside source changes. CI (`.github/workflows/ci.yml`) fails when it is stale, and `pages.yml` deploys only `index.html` to GitHub Pages on pushes to `main`.
 
 ## Hardware and protocol requirements
 
