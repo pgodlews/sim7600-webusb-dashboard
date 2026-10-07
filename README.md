@@ -47,6 +47,18 @@ Then open `http://localhost:8000` in Chrome or Edge. Hosted copies need HTTPS; t
 - GPS, GLONASS, BeiDou, Galileo, QZSS and SBAS labels when present in the NMEA stream.
 - Coordinate copying and an explicit **Open in Maps** action.
 
+### Text messages and USSD
+
+- **Load messages** reads existing texts from the SIM card or modem memory. Sender/recipient, timestamp, status and text are shown. Reading received texts marks them as read.
+- New-message alerts update the badge. Loaded messages refresh after an incoming notification when the automatic-refresh checkbox is enabled; the other storage remains selectable.
+- **Send text** submits one SMS to a phone number or short code. Use an international number such as `+44…` where possible. Sending can incur charges, including roaming charges. Network acceptance does not prove delivery.
+- Standard GSM characters allow up to 160 encoded characters; extended symbols count twice. Other basic Unicode characters, including Polish letters, allow up to 70 characters. Emoji and longer outgoing messages are not supported in this version. Received multipart texts are displayed as separate labelled parts.
+- **Delete text** permanently removes one stored message after confirmation. The app checks the SIM identity and re-reads the slot before deleting, preventing deletion from an old list after a card swap or slot reuse. There is no bulk-delete button.
+- **USSD** runs an operator code, shows the response, supports numeric menu replies and provides **End session**. Codes can change services or incur charges, so check the intended code with the operator. No automatic carrier codes are run.
+- SMS and USSD use the modem directly and do not initiate mobile internet traffic. Carrier support varies, especially for data-only SIMs and roaming.
+
+Messages and USSD responses remain in browser memory. They are cleared when reconnecting or changing demo mode; SIM changes clear cached messages before an action is allowed. The AT log can contain message contents, phone numbers and account details; clear it before swapping cards if you want to remove previous output.
+
 ### Terminal and offline use
 
 - AT command terminal, common query buttons and local log export.
@@ -68,13 +80,13 @@ A full data test uses three 1 MB downloads and three 150001-byte uploads to Clou
 
 Ordinary browser traffic still uses the computer's normal connection. Connecting this dashboard does not make the modem a system-wide internet adapter.
 
-Modem measurements and live coordinates stay in the browser. Exported logs can contain device identifiers and location, so review them before sharing. **Open in Maps** sends the selected coordinates to Google Maps only when clicked. No location is uploaded to the dashboard's hosting service.
+Modem measurements, SMS content, USSD responses and live coordinates stay in the browser. Exported logs can contain device identifiers and location, so review them before sharing. **Open in Maps** sends the selected coordinates to Google Maps only when clicked. No location is uploaded to the dashboard's hosting service.
 
 ## USB and command handling
 
 The verified device layout is vendor `0x1e0e`, product `0x9001`, AT interface **2**, OUT endpoint **3**, IN endpoint **4**. The page validates the descriptor layout before claiming the interface.
 
-AT commands run sequentially; scheduled polling pauses during data tests. The session disables command echo with `ATE0`, and restores echo with `ATE1` on normal disconnect. NMEA reporting uses `AT+CGPSINFOCFG=1,198143`; the previous reporting configuration is restored on normal disconnect. Uploads use small paced chunks to avoid modem input-buffer problems.
+AT commands run sequentially; scheduled polling pauses during data tests, SMS actions and USSD requests. SMS uses PDU mode to separate message text from command responses, with GSM and UCS2 decoding. SMS format and selected read storage are restored after each operation. Incoming-message notification settings are restored on normal disconnect. USSD replies are handled independently from command acknowledgements, including multiline replies. The session disables command echo with `ATE0`, and restores echo with `ATE1` on normal disconnect. NMEA reporting uses `AT+CGPSINFOCFG=1,198143`; the previous reporting configuration is restored on normal disconnect. Uploads use small paced chunks to avoid modem input-buffer problems.
 
 ## Development
 
@@ -105,7 +117,7 @@ No npm packages are required. Commit the regenerated `index.html` with source ch
 
 The connected SIM7600G responded to direct USB AT queries, completed HTTP transfers, and streamed NMEA GGA/RMC/VTG/GSA/GNS sentences. It had no satellite fix during those checks.
 
-Simulated-device checks cover endpoint selection, responses, transfer sequences, cleanup, GNSS units and hemisphere conversion, fix loss, NMEA checksum validation, multipart GSV assembly, stale satellite expiry and demo mode. These checks do not replace physical WebUSB permission testing or live satellite reception.
+Simulated-device checks cover endpoint selection, responses, transfer sequences, cleanup, GNSS units and hemisphere conversion, fix loss, NMEA checksum validation, multipart GSV assembly, stale satellite expiry and demo mode. Messaging checks also cover GSM/Unicode encoding, multipart headers, a send prompt without a trailing newline, incoming notifications, USSD menus and Unicode, storage restoration, SIM changes and stale-slot deletion protection. Sending and deletion were tested with a simulated modem; no real texts were sent or deleted. These checks do not replace physical WebUSB permission testing, carrier SMS/USSD support or live satellite reception.
 
 ## License
 

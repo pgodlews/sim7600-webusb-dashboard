@@ -16,6 +16,7 @@ Edit source files and run `node assemble.cjs`; do not hand-edit the generated `i
 ## Hardware and protocol requirements
 
 - Current USB layout: vendor `0x1e0e`, product `0x9001`, AT interface 2, OUT endpoint 3, IN endpoint 4. Validate descriptors before claiming the interface.
+- SMS and USSD actions must share the command queue. Keep SMS payloads in PDU mode; handle non-newline send prompts and asynchronous USSD/new-message notifications. Never send or delete a real SMS merely to test a change. Re-check SIM identity and slot contents before deletion; require a user confirmation in the UI. Preserve SMS mode, selected storage and notification settings.
 - Keep all AT commands sequential. Pause scheduled polling during data transfers.
 - Preserve paced upload chunks and check bytes written; oversized writes previously caused modem input problems.
 - Validate NMEA checksums and assemble complete multipart GSV cycles before displaying them.
